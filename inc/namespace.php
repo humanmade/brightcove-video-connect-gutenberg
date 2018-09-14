@@ -3,8 +3,8 @@
 namespace HM\Brightcove\Gutenberg;
 
 function bootstrap() {
-    add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\block_assets' );
-    add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\block_editor_assets' );
+	add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\block_assets' );
+	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\block_editor_assets' );
 	add_action( 'init', __NAMESPACE__ . '\\register_block_render_callback' );
 }
 
