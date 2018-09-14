@@ -130,7 +130,10 @@ registerBlockType( 'hm/brightcove-video', {
 					) }
 					<button
 						className="editor-brightcove-selector__button"
-						onClick={ wpbc.triggerModal }
+						onClick={ () => {
+							wpbc.shortcode = getShortcodeString( attributes );
+							wpbc.triggerModal();
+						} }
 					>{ __( 'Select a video' ) }</button>
 				</div>
 			</div>
