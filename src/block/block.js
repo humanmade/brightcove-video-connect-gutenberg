@@ -1,8 +1,7 @@
 /**
  * BLOCK: block
  *
- * Registering a basic block with Gutenberg.
- * Simple block, renders and saves the same content without any interactivity.
+ * Registers a block to handle the Brightcove Video Connect shortcode in Gutenberg.
  */
 
 //  Import CSS.
@@ -13,11 +12,9 @@ const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
 
 /**
- * Register: aa Gutenberg Block.
+ * Register a Gutenberg Block.
  *
- * Registers a new block provided a unique name and an object defining its
- * behavior. Once registered, the block is made editor as an option to any
- * editor interface where blocks are implemented.
+ * Registers a new block to provide UI for the [bc_video] shortcode in Gutenberg.
  *
  * @link https://wordpress.org/gutenberg/handbook/block-api/
  * @param  {string}   name     Block name.
@@ -25,16 +22,51 @@ const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.b
  * @return {?WPBlock}          The block, if it has been successfully
  *                             registered; otherwise `undefined`.
  */
-registerBlockType( 'cgb/block-block', {
-	// Block name. Block names must be string that contains a namespace prefix. Example: my-plugin/my-custom-block.
-	title: __( 'block - CGB Block' ), // Block title.
-	icon: 'shield', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
-	category: 'common', // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
+registerBlockType( 'hm/brightcove-video', {
+
+	title: __( 'Brightcove Video', 'brightcove-gutenberg' ),
+
+	icon: 'format-video',
+
+	category: 'widgets',
+
 	keywords: [
-		__( 'block — CGB Block' ),
-		__( 'CGB Example' ),
-		__( 'create-guten-block' ),
+		__( 'Brightcove', 'brightcove-gutenberg' ),
+		__( 'video', 'brightcove-gutenberg' ),
 	],
+
+	attributes: {
+		'player_id': {
+			type: 'string',
+		},
+		'account_id': {
+			type: 'string',
+		},
+		'video_id': {
+			type: 'string',
+		},
+		'autoplay': {
+			type: 'string',
+		},
+		'embed': {
+			type: 'string',
+		},
+		'padding_top': {
+			type: 'string',
+		},
+		'min_width': {
+			type: 'string',
+		},
+		'max_width': {
+			type: 'string',
+		},
+		'height': {
+			type: 'string',
+		},
+		'width': {
+			type: 'string',
+		},
+	},
 
 	/**
 	 * The edit function describes the structure of your block in the context of the editor.
@@ -44,22 +76,43 @@ registerBlockType( 'cgb/block-block', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	edit: function( props ) {
-		// Creates a <p class='wp-block-cgb-block-block'></p>.
+	edit( { attributes, setAttributes, className } ) {
+
+		const {
+			player_id,
+			account_id,
+			video_id,
+			autoplay,
+			embed,
+			padding_top,
+			min_width,
+			max_width,
+			height,
+			width,
+		} = attributes;
+
+		//  Update attributes when the WPBC "insert:shortcode" event is fired.
+		wpbc.broadcast.on( 'insert:shortcode', () => {
+			const { shortcode } = wp.shortcode.next( 'bc_video', wpbc.shortcode );
+			console.log( shortcode );
+			setAttributes( shortcode.attrs.named );
+		} );
+
 		return (
-			<div className={ props.className }>
-				<p>— Hello from the backend.</p>
-				<p>
-					CGB BLOCK: <code>block</code> is a new Gutenberg block
-				</p>
-				<p>
-					It was created via{ ' ' }
-					<code>
-						<a href="https://github.com/ahmadawais/create-guten-block">
-							create-guten-block
-						</a>
-					</code>.
-				</p>
+			<div className={ className }>
+				{ ! video_id && (
+					<div class="components-placeholder editor-brightcove-selector">
+						<button
+							className="editor-brightcove-selector__button"
+							onClick={ wpbc.triggerModal }
+						>{ __( 'Select a video' ) }</button>
+					</div>
+				) }
+				{ video_id && (
+					<div>
+					Video ID: { video_id }
+					</div>
+				) }
 			</div>
 		);
 	},
@@ -72,21 +125,20 @@ registerBlockType( 'cgb/block-block', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	save: function( props ) {
+	save: function( { attributes, className } ) {
+
+		if ( ! attributes.video_id ) {
+			return;
+		}
+
+		const shortcodeProps = {
+			tag: 'bc_video',
+			attrs: attributes,
+		};
+
 		return (
-			<div>
-				<p>— Hello from the frontend.</p>
-				<p>
-					CGB BLOCK: <code>block</code> is a new Gutenberg block.
-				</p>
-				<p>
-					It was created via{ ' ' }
-					<code>
-						<a href="https://github.com/ahmadawais/create-guten-block">
-							create-guten-block
-						</a>
-					</code>.
-				</p>
+			<div className={ className }>
+				{ wp.shortcode.string( shortcodeProps ) }
 			</div>
 		);
 	},
