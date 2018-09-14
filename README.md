@@ -2,7 +2,7 @@
 	<tr>
 		<td align="left" width="70">
 			<strong>Brightcove Video Connect Gutenberg block</strong><br />
-			Provides a block interface in Gutenberg for the shortcode and interface from the [Brightcove Video Connect](https://github.com/10up/brightcove-video-connect) plugin.
+			Provides a block interface in Gutenberg for the shortcode and interface from the <a href="https://github.com/10up/brightcove-video-connect">Brightcove Video Connect</a> plugin.
 		</td>
 		<td align="right" width="20%">
 			<a href="https://travis-ci.org/humanmade/tachyon-plugin">
