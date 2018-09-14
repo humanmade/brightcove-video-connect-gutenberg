@@ -117,16 +117,16 @@ registerBlockType( 'hm/brightcove-video', {
 		} );
 
 		return (
-			<div className={ className }>
+			<div className={ className + ( video_id ? ' has-video-preview' : '' ) }>
 				<div class="components-placeholder editor-brightcove-selector">
 					{ video_id && (
-						<div class="editor-brightcove-preview">
-							<ServerSideRender
-								block="hm/brightcove-video"
-								attributes={ { text: getShortcodeString( attributes ) } }
-								content={ getShortcodeString( attributes ) }
-							/>
-						</div>
+						<iframe
+							src={ `//players.brightcove.net/${ account_id}/${ player_id }_default/index.html?videoId=${ video_id }` }
+							style= { {
+								width: '100%',
+								height: '400px',
+							} }
+						/>
 					) }
 					<button
 						className="editor-brightcove-selector__button"
