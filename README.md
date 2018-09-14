@@ -33,3 +33,15 @@ Built using [create-guten-block](https://github.com/ahmadawais/create-guten-bloc
 This repo doesn't currently include the dist files. To build the dist files, clone the repository, run `npm install` and then `npm run build`.
 
 
+### TODO:
+
+**Add support for playlists.** Currently this interface only supports the `[bc_video]` shortcode. We should build out support for the playlist shortcode as well.
+
+**Better, more Gutenberg-y interface.** It would be nice to allow setting options through a panel in inspector controls, rather than having to open the modal to make those changes.
+
+**Support more options in preview iframe.** If dimensions are set on the shortcode, we could try to respect those in the editor preview as well.
+
+**Release with built files.** It'd make it easier to include as a submodule if there was a tag which contained all the dist files. Also, release to .org plugin repository.
+
+
+
