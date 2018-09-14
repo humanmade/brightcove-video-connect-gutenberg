@@ -94,7 +94,6 @@ registerBlockType( 'hm/brightcove-video', {
 		//  Update attributes when the WPBC "insert:shortcode" event is fired.
 		wpbc.broadcast.on( 'insert:shortcode', () => {
 			const { shortcode } = wp.shortcode.next( 'bc_video', wpbc.shortcode );
-			console.log( shortcode );
 			setAttributes( shortcode.attrs.named );
 		} );
 
@@ -131,9 +130,17 @@ registerBlockType( 'hm/brightcove-video', {
 			return;
 		}
 
+		// Canonicalize order of attributes to ensure that saved content matches previous value.
+		const shortcodeAtts = Object.entries( attributes )
+			.sort( ( a, b ) => a[0].localeCompare( b[0] ) )
+			.reduce( ( atts, [ k, v ] ) => {
+				atts[ k ] = v;
+				return atts;
+			}, {} );
+
 		const shortcodeProps = {
 			tag: 'bc_video',
-			attrs: attributes,
+			attrs: shortcodeAtts
 		};
 
 		return (
