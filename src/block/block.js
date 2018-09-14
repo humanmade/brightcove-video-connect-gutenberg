@@ -9,7 +9,26 @@ import './style.scss';
 import './editor.scss';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
+const { Fragment } = wp.element;
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
+const { ServerSideRender } = wp.components;
+
+const getShortcodeString = attrs => {
+
+	if ( ! attrs.video_id ) {
+		return;
+	}
+
+	// Canonicalize order of attributes to ensure that saved content matches previous value.
+	const shortcodeAtts = Object.entries( attrs )
+		.sort( ( a, b ) => a[0].localeCompare( b[0] ) )
+		.reduce( ( atts, [ k, v ] ) => {
+			atts[ k ] = v;
+			return atts;
+		}, {} );
+
+	return wp.shortcode.string( { tag: 'bc_video', attrs: shortcodeAtts } );
+}
 
 /**
  * Register a Gutenberg Block.
@@ -99,19 +118,21 @@ registerBlockType( 'hm/brightcove-video', {
 
 		return (
 			<div className={ className }>
-				{ ! video_id && (
-					<div class="components-placeholder editor-brightcove-selector">
-						<button
-							className="editor-brightcove-selector__button"
-							onClick={ wpbc.triggerModal }
-						>{ __( 'Select a video' ) }</button>
-					</div>
-				) }
-				{ video_id && (
-					<div>
-					Video ID: { video_id }
-					</div>
-				) }
+				<div class="components-placeholder editor-brightcove-selector">
+					{ video_id && (
+						<div class="editor-brightcove-preview">
+							<ServerSideRender
+								block="hm/brightcove-video"
+								attributes={ { text: getShortcodeString( attributes ) } }
+								content={ getShortcodeString( attributes ) }
+							/>
+						</div>
+					) }
+					<button
+						className="editor-brightcove-selector__button"
+						onClick={ wpbc.triggerModal }
+					>{ __( 'Select a video' ) }</button>
+				</div>
 			</div>
 		);
 	},
@@ -125,27 +146,9 @@ registerBlockType( 'hm/brightcove-video', {
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
 	save: function( { attributes, className } ) {
-
-		if ( ! attributes.video_id ) {
-			return;
-		}
-
-		// Canonicalize order of attributes to ensure that saved content matches previous value.
-		const shortcodeAtts = Object.entries( attributes )
-			.sort( ( a, b ) => a[0].localeCompare( b[0] ) )
-			.reduce( ( atts, [ k, v ] ) => {
-				atts[ k ] = v;
-				return atts;
-			}, {} );
-
-		const shortcodeProps = {
-			tag: 'bc_video',
-			attrs: shortcodeAtts
-		};
-
 		return (
 			<div className={ className }>
-				{ wp.shortcode.string( shortcodeProps ) }
+				{ getShortcodeString( attributes ) }
 			</div>
 		);
 	},
