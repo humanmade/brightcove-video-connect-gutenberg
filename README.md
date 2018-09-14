@@ -15,7 +15,7 @@
 	</tr>
 	<tr>
 		<td>
-			A <strong><a href="https://hmn.md/">Human Made</a></strong> project. Develeoped by @goldenapples.
+			A <strong><a href="https://hmn.md/">Human Made</a></strong> project. Initially developed by @goldenapples.
 		</td>
 		<td align="center">
 			<img src="https://hmn.md/content/themes/hmnmd/assets/images/hm-logo.svg" width="100" />
