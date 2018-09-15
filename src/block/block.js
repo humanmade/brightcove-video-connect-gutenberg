@@ -95,7 +95,7 @@ registerBlockType( 'hm/brightcove-video', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	edit( { attributes, setAttributes, className } ) {
+	edit( { attributes, setAttributes, className, isSelected } ) {
 
 		const {
 			player_id,
@@ -110,11 +110,6 @@ registerBlockType( 'hm/brightcove-video', {
 			width,
 		} = attributes;
 
-		//  Update attributes when the WPBC "insert:shortcode" event is fired.
-		wpbc.broadcast.on( 'insert:shortcode', () => {
-			const { shortcode } = wp.shortcode.next( 'bc_video', wpbc.shortcode );
-			setAttributes( shortcode.attrs.named );
-		} );
 
 		return (
 			<div className={ className + ( video_id ? ' has-video-preview' : '' ) }>
@@ -133,6 +128,18 @@ registerBlockType( 'hm/brightcove-video', {
 						onClick={ () => {
 							wpbc.shortcode = getShortcodeString( attributes );
 							wpbc.triggerModal();
+
+							/*
+							 * Update shortcode attributes when the WPBC "insert:shortcode" event
+							 * is fired, clearing any previously attached insert handlers first.
+							 */
+							wpbc.broadcast.off( 'insert:shortcode' );
+							wpbc.broadcast.once( 'insert:shortcode',
+								() => {
+									const { shortcode } = wp.shortcode.next( 'bc_video', wpbc.shortcode );
+									setAttributes( shortcode.attrs.named );
+								}
+							);
 						} }
 					>{ __( 'Select a video' ) }</button>
 				</div>
